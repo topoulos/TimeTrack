@@ -16,8 +16,8 @@ namespace TimeTrack.Data
         {
             
         }
-        public DbSet<Project> Projects { get; set; }
-        public DbSet<ProjectTask> ProjectTasks { get; set; }
-        public DbSet<TimeEntry> TimeEntries { get; set; }
+        public virtual DbSet<Project> Projects { get; set; }
+        public virtual DbSet<ProjectTask> ProjectTasks { get; set; }
+        public virtual DbSet<TimeEntry> TimeEntries { get; set; }
     }
 }
