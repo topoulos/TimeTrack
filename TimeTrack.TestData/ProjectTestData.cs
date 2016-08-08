@@ -7,8 +7,13 @@ using TimeTrack.Models.Database;
 
 namespace TimeTrack.TestData
 {
-    public static class ProjectTestData
+    public class ProjectTestData
     {
+        public static IEnumerable<Project> Projects { get; set; } 
+        public ProjectTestData(int numberOfProjects, int numberOfTasksPerProject)
+        {
+            Projects = Get(numberOfProjects, numberOfTasksPerProject);
+        }
         public static IEnumerable<Project> Get(int numberOfprojects, int numberOfTasksPerProject)
         {
             Randomizer.Seed = new Random(3897234);
@@ -44,6 +49,7 @@ namespace TimeTrack.TestData
                 }
             }
             return projects;
+             
         }
     }
 }

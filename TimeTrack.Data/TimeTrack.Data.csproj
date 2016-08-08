@@ -49,10 +49,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Migrations\201608080148132_fifth.cs" />
+    <Compile Include="Migrations\201608080148132_fifth.Designer.cs">
+      <DependentUpon>201608080148132_fifth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestConfig.cs" />
+    <Compile Include="MainConfig.cs" />
     <Compile Include="Migrations\201608060712406_fourth.cs" />
     <Compile Include="Migrations\201608060712406_fourth.Designer.cs">
       <DependentUpon>201608060712406_fourth.cs</DependentUpon>
     </Compile>
+    <Compile Include="TestContext.cs" />
     <Compile Include="TimeTrackContext.cs" />
     <Compile Include="Migrations\201608060653118_initial.cs" />
     <Compile Include="Migrations\201608060653118_initial.Designer.cs">
@@ -66,7 +73,6 @@
     <Compile Include="Migrations\201608060700590_third.Designer.cs">
       <DependentUpon>201608060700590_third.cs</DependentUpon>
     </Compile>
-    <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -91,6 +97,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201608060712406_fourth.resx">
       <DependentUpon>201608060712406_fourth.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201608080148132_fifth.resx">
+      <DependentUpon>201608080148132_fifth.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

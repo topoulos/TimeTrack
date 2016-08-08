@@ -22,6 +22,7 @@ namespace TimeTrack.Tests
                 .Returns(queryableData.ElementType);
             mockSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator())
                 .Returns(queryableData.GetEnumerator());
+
             return mockSet;
         }
 
@@ -54,5 +55,6 @@ namespace TimeTrack.Tests
             Mock<DbSet<TEntity>> mockSet = CreateMockSet(entities.AsQueryable());
             return setup.Returns(mockSet.Object);
         }
+
     }
 }
