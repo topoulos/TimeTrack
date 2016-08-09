@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Bogus;
+using Newtonsoft.Json.Linq;
 using Omu.ValueInjecter;
 using TimeTrack.Models.Database;
 
@@ -50,6 +51,37 @@ namespace TimeTrack.TestData
             }
             return projects;
              
+        }
+
+        public static IEnumerable<Project> GetProjectsForDb(int numberOfProjects)
+        {
+            Randomizer.Seed = new Random(3897234);
+
+            int projectIds = 1;
+            Faker<Project> fakeProjects = new Faker<Project>()
+                .StrictMode(false)
+                .RuleFor(o => o.Id, f => projectIds++)
+                .RuleFor(o => o.Name, f => f.Company.CompanyName())
+                .RuleFor(o => o.Description, f => f.Lorem.Sentence(5));
+
+            return fakeProjects.Generate(numberOfProjects);
+
+        }
+
+        public static IEnumerable<ProjectTask> GetProjectTasksForDb(int numberOfTasks, List<int> IdRange)
+        {
+            Randomizer.Seed = new Random(3897234);
+
+            int taskIds = 1;
+            Faker<ProjectTask> fakeTasks = new Faker<ProjectTask>()
+                .StrictMode(false)
+                .RuleFor(o => o.Id, f => taskIds++)
+                .RuleFor(o => o.Name, f => f.Hacker.Phrase())
+                .RuleFor(o => o.ProjectId, f => f.PickRandom(IdRange))
+                .RuleFor(o => o.Description, f => f.Lorem.Sentence(8));
+
+            return fakeTasks.Generate(numberOfTasks);
+
         }
     }
 }

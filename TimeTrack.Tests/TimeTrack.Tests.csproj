@@ -115,6 +115,7 @@
     <Compile Include="DbSetMocking.cs" />
     <Compile Include="ProjectRepositoryTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TimeTrackTestDbFixture.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
