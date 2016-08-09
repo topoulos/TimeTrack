@@ -1,8 +1,6 @@
-﻿using System.Collections.Generic;
-using System.Data.Entity;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using Moq;
 using TimeTrack.Data;
 using TimeTrack.Models.Database;
 using TimeTrack.TestData;
@@ -11,80 +9,54 @@ using Xunit;
 
 namespace TimeTrack.Tests
 {
-    public class ProjectRepositoryTest
+    public class ProjectRepositoryTest : IDisposable
     {
-        [Fact]
-        public void TestProjectTestDataLoad()
+        public ProjectRepository repo;
+        public TestContext context;
+
+        public ProjectRepositoryTest()
         {
-            //Arrange
-            IEnumerable<Project> sut = ProjectTestData.Get(20, 7);
-            //Assert
-            Assert.NotEmpty(sut.Select(t => t.Tasks).ToList());
+            context = new TestContext();
+            repo = new ProjectRepository(context);
+
+            using (context = new TestContext())
+            {
+                IEnumerable<Project> projects = ProjectTestData.GetProjectsForDb(10);
+                context.Projects.AddRange(projects);
+                context.SaveChanges();
+                List<int> ids = context.Projects.Select(i => i.Id).ToList();
+                IEnumerable<ProjectTask> tasks = ProjectTestData.GetProjectTasksForDb(100, ids);
+                context.ProjectTasks.AddRange(tasks);
+                context.SaveChanges();
+            }
         }
 
-        [Fact]
-        public void Projects_GetAll()
+        public void Dispose()
         {
-            //Arrange
-            IEnumerable<Project> sut = ProjectTestData.Get(20, 7);
-
-            //Act
-            var mockedContext = new Mock<TimeTrackContext>();
-            mockedContext.Setup(c => c.Projects).ReturnsDbSet(sut);
-            var repository = new ProjectRepository(mockedContext.Object);
-            var result = repository.GetAll();
-
-            //Assert
-            Assert.Equal(sut.Count(), result.Count());
+            using (context = new TestContext())
+            {
+                context.ProjectTasks.RemoveRange(context.ProjectTasks);
+                context.Projects.RemoveRange(context.Projects);
+            }
         }
-        public static DbSet<T> GetQueryableMockDbSet<T>(List<T> sourceList) where T : class
-        {
-            var queryable = sourceList.AsQueryable();
-
-            var dbSet = new Mock<DbSet<T>>();
-            dbSet.As<IQueryable<T>>().Setup(m => m.Provider).Returns(queryable.Provider);
-            dbSet.As<IQueryable<T>>().Setup(m => m.Expression).Returns(queryable.Expression);
-            dbSet.As<IQueryable<T>>().Setup(m => m.ElementType).Returns(queryable.ElementType);
-            dbSet.As<IQueryable<T>>().Setup(m => m.GetEnumerator()).Returns(() => queryable.GetEnumerator());
-            dbSet.Setup(d => d.Add(It.IsAny<T>())).Callback<T>((s) => sourceList.Add(s));
-
-            return dbSet.Object;
-        }
-
         [Fact]
-        public void Projects_Add()
+        public void projectrepo_add()
         {
-            //Arrange
-            IEnumerable<Project> sut = ProjectTestData.Get(20, 7);
+            using (context = new TestContext())
+            {
+                //Arrange
+                var newProject = ProjectTestData.GetProjectsForDb(1).SingleOrDefault();
 
-            Project newProject = ProjectTestData.Get(1, 5).SingleOrDefault();
+                //Act
+                int beforeCount = context.Projects.Count();
 
-            DbSet<Project> myDbSet = GetQueryableMockDbSet(sut.ToList());
+                repo.Add(newProject);
 
-            //Act
-            int preCount = myDbSet.Count();
-            myDbSet.Add(newProject);
-            int postCount = myDbSet.Count();
-       
-           
-            var mockedContext = new Mock<TimeTrackContext>();
-            mockedContext.Setup(c => c.Projects).ReturnsDbSet(sut);
-            var repository = new ProjectRepository(mockedContext.Object);
+                int afterCount = context.Projects.Count();
 
-            var addedProject = repository.Add(newProject);
-
-            //Assert
-            Assert.Equal(21,ProjectTestData.Projects.Count());
-            Assert.Equal(7, ProjectTestData.Projects.ToArray()[21].Tasks.Count);
-            Assert.NotEqual(addedProject.Id,0);
-
-        }
-
-        [Fact]
-        public void use_real_context()
-        {
-            TimeTrackContext context = new TimeTrackContext();
-
+                //Assert
+                Assert.Equal(beforeCount + 1, afterCount);
+            }
         }
     }
 }

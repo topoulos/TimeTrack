@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using TimeTrack.Data;
 using TimeTrack.Models.Database;
 
@@ -9,21 +10,21 @@ namespace TImeTrack.Repository
 {
     public class ProjectRepository
     {
-        public TimeTrackContext context;
+        public DbContext context;
 
-        public ProjectRepository(TimeTrackContext context)
+        public ProjectRepository(DbContext context)
         {
             this.context = context;
         }
 
         public IEnumerable<Project> GetAll()
         {
-            return context.Projects.ToList();
+            return context.Set<Project>().ToList();
         }
 
         public Project Add(Project newProject)
         {
-            context.Projects.Add(newProject);
+            context.Set<Project>().Add(newProject);
             context.SaveChanges();
             return newProject;
         }
